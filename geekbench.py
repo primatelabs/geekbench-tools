@@ -141,7 +141,8 @@ def parse_document(xmlString):
   docGeekbench = _parseAttributes(geekbench, Document()) 
 
   docGeekbench.score = int(get_text(geekbench.getElementsByTagName('score')[0].childNodes))
-  docGeekbench.elapsed = float(get_text(geekbench.getElementsByTagName('elapsed')[0].childNodes))
+  if len(geekbench.getElementsByTagName('elapsed')) > 0:
+    docGeekbench.elapsed = float(get_text(geekbench.getElementsByTagName('elapsed')[0].childNodes))
 
   metrics = geekbench.getElementsByTagName('metric')
   for metric in metrics:
