@@ -2,7 +2,7 @@
 
 #	 geekbench-parse.py - Parses and displays a .geekbench file
 
-#  Copyright (c) 2006-2010 Primate Labs
+#  Copyright (c) 2006-2012 Primate Labs Inc.
 
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -39,22 +39,22 @@ def main():
   for section in document.sections:
     print '%s Performance' % (section.name,)
     
-    # Iterate through the benchmarks in this section.
-    for benchmark in section.benchmarks:
-      print '  ', benchmark.name
+    # Iterate through the workloads in this section.
+    for workload in section.workloads:
+      print '  ', workload.name
       
-      # Iterate through the individual results in this benchmark.
-      for result in benchmark.results:
+      # Iterate through the individual results in this workload.
+      for result in workload.results:
         print '    ',
 
-        # Display whether the benchmark was run in single-threaded or 
+        # Display whether the workload was run in single-threaded or 
         # multi-threaded mode.
         if result.threads == 1:
           print 'single-threaded',
         else:
           print 'multi-threaded',
 
-        # Display whether the benchmark contains scalar or vector 
+        # Display whether the workload contains scalar or vector 
         # (i.e., SIMDized) code.
         if result.simd == 0:
           print 'scalar',

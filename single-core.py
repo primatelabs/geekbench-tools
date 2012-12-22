@@ -2,7 +2,7 @@
 
 #	 single-core.py - Parses and displays a .geekbench file
 
-#  Copyright (c) 2006-2011 Primate Labs
+#  Copyright (c) 2006-2012 Primate Labs Inc.
 
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,8 @@ def main():
   # Iterate through the sections in this document.
   for section in document.sections:
     scores = []
-    for benchmark in section.benchmarks:
-      for result in benchmark.results:
+    for workload in section.workloads:
+      for result in workload.results:
         if result.threads == 1:
           scores.append(int(result.score))
     section_scores[section.name] = sum(scores, 0) / len(scores)

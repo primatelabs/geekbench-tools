@@ -2,7 +2,7 @@
 
 #	 geekbench.py - Library for parsing .geekbench files
 
-#  Copyright (c) 2006-2010 Primate Labs
+#  Copyright (c) 2006-2012 Primate Labs Inc.
 
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 import xml.dom.minidom
 
+
 def get_text(nodelist):
   rc = ""
   for node in nodelist:
@@ -31,125 +32,109 @@ def get_text(nodelist):
       rc = rc + node.data
   return rc
 
-class Document:
+
+class Node:
   def __init__(self):
+    pass
+    
+  def parse(self, xml_node):
+    self.parse_attributes(xml_node)
+    self.parse_node(xml_node)
+    
+  def parse_attributes(self, xml_node):
+    if xml_node.attributes == None:
+      return
+
+    for i in range(0, xml_node.attributes.length):
+      attribute = xml_node.attributes.item(i)
+      setattr(self, attribute.name, attribute.value)
+
+
+class Document(Node):
+  def __init__(self, xml_node = None):
     self.metrics = []
     self.sections = []
     self.score = None
     self.elapsed = None
-
-  def get_metric(self, name):
-    for metric in self.metrics:
-      if metric.name.lower() == name.lower():
-        return metric.value
-    return None
     
-  def get_benchmark(self, id):
-    for section in self.sections:
-      for benchmark in section.benchmarks:
-        if benchmark.id == id:
-          return benchmark
-    return None
+    if xml_node != None:
+      self.parse(xml_node)
     
-  def get_result(self, id, threads, simd):
-    for section in self.sections:
-      for benchmark in section.benchmarks:
-        if benchmark.id == id:
-          for result in benchmark.results:
-            if result.threads == threads and result.simd == simd:
-              return result
-    return None
+  def parse_node(self, xml_node):
+    self.score = int(get_text(xml_node.getElementsByTagName('score')[0].childNodes))
+    if len(xml_node.getElementsByTagName('elapsed')) > 0:
+      self.elapsed = float(get_text(xml_node.getElementsByTagName('elapsed')[0].childNodes))
 
-class Score:
-  def __init__(self):
-    self.value = None
+    for xml_metric in xml_node.getElementsByTagName('metric'):
+      self.metrics.append(Metric(xml_metric))
 
-class Elapsed:
-  def __init__(self):
-    self.value = None
-    
-class Metric:
-  def __init__(self):
+    for xml_section in xml_node.getElementsByTagName('section'):
+      self.sections.append(Section(xml_section)) 
+
+
+class Metric(Node):
+  def __init__(self, xml_node = None):
     self.name = None
     self.id = None
     self.value = None
     
-class Section:
-  def __init__(self):
-    self.benchmarks = []
+    if xml_node != None:
+      self.parse(xml_node)
+  
+  def parse_node(self, xml_node):
+    pass
+
+    
+class Section(Node):
+  def __init__(self, xml_node = None):
+    self.workloads = []
     self.name = None
     self.score = None
     self.id = None
     
-class Benchmark:
-  def __init__(self):
+    if xml_node != None:
+      self.parse(xml_node)
+      
+  def parse_node(self, xml_node):    
+    self.score = int(get_text(xml_node.getElementsByTagName('score')[0].childNodes))
+    for xml_workload in xml_node.getElementsByTagName('benchmark'):
+      self.workloads.append(Workload(xml_workload))
+      
+    
+class Workload(Node):
+  def __init__(self, xml_node = None):
     self.results = []
     self.name = None
     self.id = None
     self.units = None
     self.inverse = None
+    
+    if xml_node != None:
+      self.parse(xml_node)
 
-class Result:
-  def __init__(self):
+  def parse_node(self, xml_node):
+    for xml_result in xml_node.getElementsByTagName('result'):
+      self.results.append(WorkloadResult(xml_result))
+
+
+class WorkloadResult(Node):
+  def __init__(self, xml_node = None):
     self.threads = None
     self.simd = None
     self.result = None
     self.rate = None
     self.score = None
     self.comment = None
-
-def _parseAttributes(node, docNode):
-  for i in range(0, node.attributes.length):
-    attribute = node.attributes.item(i)
-    setattr(docNode, attribute.name, attribute.value)
-  return docNode
-
-def _parseResult(node_result):
-  result = _parseAttributes(node_result, Result())
-  # TODO: Find a way for _parseAttributes to automatically determine the correct
-  # type for .threads and .simd (and for other fields as well).
-  result.threads = int(result.threads)
-  result.simd = int(result.simd)
-  return result
-
-def _parseBenchmark(benchmark):
-  docBenchmark = _parseAttributes(benchmark, Benchmark())
-  for result in benchmark.getElementsByTagName('result'):
-    docBenchmark.results.append(_parseResult(result)) 
-  return docBenchmark
-
-def _parseSection(section):
-  docSection = _parseAttributes(section, Section())  
-  docSection.score = int(get_text(section.getElementsByTagName('score')[0].childNodes))
-  for benchmark in section.getElementsByTagName('benchmark'):
-    docSection.benchmarks.append(_parseBenchmark(benchmark))
-  return docSection
-  
-def _parseMetric(metric):
-  return _parseAttributes(metric, Metric())
-  
-def _parseScore(score):
-  return _parseAttributes(score, Score())
-  
-def _parseElapsed(elapsed):
-  return _parseAttributes(elapsed, Elapsed())
     
-def parse_document(xmlString):
-  document = xml.dom.minidom.parseString(xmlString)
+    if xml_node != None:
+      self.parse(xml_node)
 
-  geekbench = document.getElementsByTagName('geekbench')[0]
-  docGeekbench = _parseAttributes(geekbench, Document()) 
+  def parse_node(self, xml_node):
+    self.threads = int(self.threads)
+    self.simd = int(self.simd)
 
-  docGeekbench.score = int(get_text(geekbench.getElementsByTagName('score')[0].childNodes))
-  if len(geekbench.getElementsByTagName('elapsed')) > 0:
-    docGeekbench.elapsed = float(get_text(geekbench.getElementsByTagName('elapsed')[0].childNodes))
 
-  metrics = geekbench.getElementsByTagName('metric')
-  for metric in metrics:
-    docGeekbench.metrics.append(_parseMetric(metric))
+def parse_document(xml_string):
+  xml_node = xml.dom.minidom.parseString(xml_string)
   
-  sections = geekbench.getElementsByTagName('section')
-  for section in sections:
-    docGeekbench.sections.append(_parseSection(section)) 
-  
-  return docGeekbench
+  return Document(xml_node)
