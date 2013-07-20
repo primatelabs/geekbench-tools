@@ -82,8 +82,40 @@ class Metric(Node):
       self.parse(xml_node)
   
   def parse_node(self, xml_node):
-    pass
+    self.id = int(self.id)
+    self.name = self.lookup_name()
 
+  def lookup_name(self):
+    names = {
+      1: "Platform",
+      2: "Compiler",
+      3: "Operating System",
+      4: "Model",
+      5: "Motherboard",
+      6: "CPU Brand",
+      7: "CPU ID",
+      8: "Threads",
+      9: "Processors",
+      10: "CPU Frequency",
+      11: "CPU L1I",
+      12: "CPU L1D",
+      13: "CPU L2",
+      14: "CPU L3",
+      15: "FSB Frequency",
+      16: "Memory",
+      17: "Memory Type",
+      19: "BIOS",
+      20: "CPU Name",
+      21: "Cores",
+      32: "Model ID",
+      33: "Build",
+      34: "Secure"
+    }
+    
+    if self.id in names:
+      return names[self.id]
+    
+    return ''
     
 class Section(Node):
   def __init__(self, xml_node = None):
@@ -95,7 +127,8 @@ class Section(Node):
     if xml_node != None:
       self.parse(xml_node)
       
-  def parse_node(self, xml_node):    
+  def parse_node(self, xml_node):
+    self.id = int(self.id)
     self.score = int(get_text(xml_node.getElementsByTagName('score')[0].childNodes))
     for xml_workload in xml_node.getElementsByTagName('benchmark'):
       self.workloads.append(Workload(xml_workload))
@@ -113,6 +146,7 @@ class Workload(Node):
       self.parse(xml_node)
 
   def parse_node(self, xml_node):
+    self.id = int(self.id)
     for xml_result in xml_node.getElementsByTagName('result'):
       self.results.append(WorkloadResult(xml_result))
 
@@ -132,6 +166,7 @@ class WorkloadResult(Node):
   def parse_node(self, xml_node):
     self.threads = int(self.threads)
     self.simd = int(self.simd)
+    self.score = int(self.score)
 
 
 def parse_document(xml_string):
