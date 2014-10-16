@@ -23,6 +23,11 @@
 require 'csv'
 require 'json'
 
+if ARGV.length() != 2
+  puts "Usage: #{$0} DOCUMENT CSV"
+  exit
+end
+
 json = File.open(ARGV[0], 'r').read()
 document = JSON.parse(json)
 
