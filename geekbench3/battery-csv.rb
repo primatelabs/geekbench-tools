@@ -34,13 +34,17 @@ document = JSON.parse(json)
 CSV.open(ARGV[1], 'w') do |csv|
   csv << ["timestamp",
           "battery_level",
+          "battery_state",
           "iterations",
+          "duty_cycle",
           "runtime_mean",
           "runtime_stddev"]
   for result in document['results']
     csv << [result["timestamp"],
             result["battery_level"],
+            result["battery_state"],
             result["iterations"],
+            result["duty_cycle"],
             result["runtime_mean"],
             result["runtime_stddev"]]
   end
