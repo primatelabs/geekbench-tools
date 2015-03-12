@@ -46,21 +46,20 @@ baseline_rate = {"AES" : 2297304827.712579, "Twofish" : 147104771.2752039,
 class Workload(object):
   def __init__(self, jsonf):
     self.name = jsonf['name']
-    if len(jsonf['results']) == 2:
-      self.sc_runtime = jsonf['results'][0]['runtime']
-      self.mc_runtime = jsonf['results'][1]['runtime']
-      self.sc_work = jsonf['results'][0]['work']
-      self.mc_work = jsonf['results'][1]['work']
-    elif jsonf['results'][0]['threads'] == 1:
-      self.sc_runtime = jsonf['results'][0]['runtime']
-      self.mc_runtime = 0
-      self.sc_work = jsonf['results'][0]['work']
-      self.mc_work = 0
-    elif jsonf['results'][0]['threads'] > 1:
-      self.sc_runtime = 0
-      self.mc_runtime = jsonf['results'][0]['runtime']
-      self.sc_work = 0
-      self.mc_work = jsonf['results'][0]['work']
+    self.sc_runtime = 0
+    self.sc_work = 0
+    self.mc_runtime = 0
+    self.mc_work = 0
+
+    for result in jsonf['results']:
+      if result['threads'] == 1:
+        self.sc_runtime = result['runtime']
+        self.sc_work = result['work']
+      elif result['threads'] > 1:
+        self.mc_runtime = result['runtime']
+        self.mc_work = result['work']
+      else:
+        raise ValueError("Result had zero worker threads for {}".format(name))
 
   def sc_rate(self):
     if self.sc_runtime > 0:
