@@ -22,9 +22,7 @@
 
 import json
 import sys
-import numpy
-import scipy
-from scipy import stats
+import math
 
 baseline_rate = {"AES" : 2297304827.712579, "Twofish" : 147104771.2752039,
 "SHA1" : 284535727.5317147, "SHA2" : 113421232.21088956,
@@ -91,13 +89,20 @@ def get_sections(jsondata):
     sections[section_name] = section
   return sections
 
+def geomean(scores):
+  score_total = 1
+  for score in scores:
+    score_total *= score
+  nth_root = 1 / float(len(scores))
+  return int(math.pow(score_total, nth_root))
+
 def compute_sect_sc_score(section):
   scores = [wl.wl_sc_score() for wl in section]
-  return int(scipy.stats.gmean(scores))
+  return geomean(scores)
 
 def compute_sect_mc_score(section):
   scores = [wl.wl_mc_score() for wl in section]
-  return int(scipy.stats.gmean(scores))
+  return geomean(scores)
 
 def compute_geekbench_sc_score(sections):
   geekbench_score = 0
