@@ -178,7 +178,7 @@ def get_rate_string(wl_name, rate):
 def main():
   jsonfile = open(sys.argv[1])
   jsonobj = json.load(jsonfile)
-  print jsonobj['sections'][0]['workloads'][0]['results'][0]['runtime']
+
   sections = get_sections(jsonobj)
   gb_sc_score = compute_geekbench_sc_score(sections)
   gb_mc_score = compute_geekbench_mc_score(sections)
