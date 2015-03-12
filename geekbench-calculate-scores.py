@@ -89,7 +89,7 @@ def get_sections(jsondata):
 		section = []
 		for wl in wls:
 			section.append(Workload(wl))
-		sections[section_name] = section 
+		sections[section_name] = section
 	return sections
 
 def compute_sect_sc_score(section):
@@ -122,33 +122,33 @@ def compute_geekbench_mc_score(sections):
 
 def get_rate_string(wl_name, rate):
 
-	rate_units = { "BytesSecond" : "B/sec", "Flops" : "flops",  
-	"AllocSecond" : "allocs/second", "PixelsSecond" : "pixels/sec", 
+	rate_units = { "BytesSecond" : "B/sec", "Flops" : "flops",
+	"AllocSecond" : "allocs/second", "PixelsSecond" : "pixels/sec",
 	"NodesSecond" : "nodes/sec", "PairsSecond" : "pairs/sec"}
 
-	wl_units = {"AES" : rate_units['BytesSecond'], 
+	wl_units = {"AES" : rate_units['BytesSecond'],
 	"Twofish" : rate_units['BytesSecond'], "SHA1" : rate_units['BytesSecond'],
-	"SHA2" : rate_units['BytesSecond'], 
-	"BZip2 Compress" : rate_units['BytesSecond'], 
-	"BZip2 Decompress" : rate_units['BytesSecond'], 
-	"JPEG Compress" :  rate_units['PixelsSecond'], 
-	"JPEG Decompress" : rate_units['PixelsSecond'], 
-	"PNG Compress" : rate_units['PixelsSecond'], 
-	"PNG Decompress" : rate_units['PixelsSecond'], 
-	"Sobel" : rate_units['PixelsSecond'], 
-	"Lua" : rate_units['BytesSecond'] , 
-	"Dijkstra" : rate_units['PairsSecond'],  
-	"BlackScholes" : rate_units['NodesSecond'], 
-	"Mandelbrot" : rate_units['Flops'], 
-	"Sharpen Filter" :   rate_units['Flops'], 
+	"SHA2" : rate_units['BytesSecond'],
+	"BZip2 Compress" : rate_units['BytesSecond'],
+	"BZip2 Decompress" : rate_units['BytesSecond'],
+	"JPEG Compress" :  rate_units['PixelsSecond'],
+	"JPEG Decompress" : rate_units['PixelsSecond'],
+	"PNG Compress" : rate_units['PixelsSecond'],
+	"PNG Decompress" : rate_units['PixelsSecond'],
+	"Sobel" : rate_units['PixelsSecond'],
+	"Lua" : rate_units['BytesSecond'] ,
+	"Dijkstra" : rate_units['PairsSecond'],
+	"BlackScholes" : rate_units['NodesSecond'],
+	"Mandelbrot" : rate_units['Flops'],
+	"Sharpen Filter" :   rate_units['Flops'],
 	"Blur Filter" :  rate_units['Flops'],
-	"SGEMM" : rate_units['Flops'], "DGEMM" :  rate_units['Flops'] , 
-	"SFFT" : rate_units['Flops'], "DFFT" :  rate_units['Flops'], 
-	"N-Body" : rate_units['PairsSecond'], 
-	"Ray Trace" : rate_units['PixelsSecond'], 
+	"SGEMM" : rate_units['Flops'], "DGEMM" :  rate_units['Flops'] ,
+	"SFFT" : rate_units['Flops'], "DFFT" :  rate_units['Flops'],
+	"N-Body" : rate_units['PairsSecond'],
+	"Ray Trace" : rate_units['PixelsSecond'],
 	"Stream Copy" : rate_units['BytesSecond'],
-	"Stream Scale" : rate_units['BytesSecond'], 
-	"Stream Add" :  rate_units['BytesSecond'], 
+	"Stream Scale" : rate_units['BytesSecond'],
+	"Stream Add" :  rate_units['BytesSecond'],
 	"Stream Triad" : rate_units['BytesSecond'] }
 
 	prefixes = ["", "K", "M", "G", "T"]
@@ -206,7 +206,7 @@ def main():
 	gb_sc_score_just = str(gb_sc_score).rjust(7)
 	gb_mc_score_just = str(gb_mc_score).rjust(7)
 
-	print "\t%s%s%s".expandtabs(2) % ("Geekbench Score".ljust(24), 
+	print "\t%s%s%s".expandtabs(2) % ("Geekbench Score".ljust(24),
 	gb_sc_score_just, gb_mc_score_just)
 	jsonfile.close()
 
