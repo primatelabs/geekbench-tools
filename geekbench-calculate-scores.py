@@ -94,15 +94,15 @@ def geomean(scores):
   for score in scores:
     score_total *= score
   nth_root = 1 / float(len(scores))
-  return int(math.pow(score_total, nth_root))
+  return math.pow(score_total, nth_root)
 
 def compute_sect_sc_score(section):
   scores = [wl.wl_sc_score() for wl in section]
-  return geomean(scores)
+  return int(geomean(scores))
 
 def compute_sect_mc_score(section):
   scores = [wl.wl_mc_score() for wl in section]
-  return geomean(scores)
+  return int(geomean(scores))
 
 def compute_geekbench_sc_score(sections):
   geekbench_score = 0
@@ -178,7 +178,8 @@ def get_rate_string(wl_name, rate):
 def main():
   jsonfile = open(sys.argv[1])
   jsonobj = json.load(jsonfile)
-
+  jsonfile.close()
+  
   sections = get_sections(jsonobj)
   gb_sc_score = compute_geekbench_sc_score(sections)
   gb_mc_score = compute_geekbench_mc_score(sections)
@@ -189,11 +190,11 @@ def main():
     for wl in wls:
       print "\t%s".expandtabs(2) % wl.name
 
-      wl_sc_score_str = str(int(wl.wl_sc_score())).rjust(12)
+      wl_sc_score_str = str(wl.wl_sc_score()).rjust(12)
       sc_rate_str = get_rate_string(wl.name, wl.sc_rate()).rjust(21)
       print "\tsingle-core%s%s".expandtabs(4) % (wl_sc_score_str, sc_rate_str)
 
-      wl_mc_score_str = str(int(wl.wl_mc_score())).rjust(13)
+      wl_mc_score_str = str(wl.wl_mc_score()).rjust(13)
       mc_rate_str = get_rate_string(wl.name, wl.mc_rate()).rjust(21)
       print "\tmulti-core%s%s".expandtabs(4) % (wl_mc_score_str , mc_rate_str)
     print ""
@@ -212,7 +213,7 @@ def main():
 
   print "\t%s%s%s".expandtabs(2) % ("Geekbench Score".ljust(24),
   gb_sc_score_just, gb_mc_score_just)
-  jsonfile.close()
+
 
 if __name__ == "__main__":
   main()
